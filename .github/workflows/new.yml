@@ -1,0 +1,27 @@
+name: Deploy to Hosting Platform
+on:
+  push:
+    branches:
+      - master
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10.2'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Build application
+        run: |
+          export FLASK_APP=app.py
+          export FLASK_ENV=production
+          flask build
+      - name: Deploy application
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          publish_dir: ./build
+          deploy_key: ${{ secrets.DEPLOY_KEY }}
